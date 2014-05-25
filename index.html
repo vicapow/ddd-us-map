@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<!-- see: http://bl.ocks.org/mbostock/4060606 for the original -->
+<meta charset="utf-8">
+<style>
+.counties {
+  fill: none;
+  stroke: none;
+}
+.land {
+  fill: none;
+  stroke: black;
+  stroke-linejoin: round;
+  shape-rendering: crispEdges;
+}
+</style>
+<body>
+<script src="node_modules/d3/d3.js"></script>
+<script src="node_modules/topojson/topojson.js"></script>
+<script>
+
+var width = 960, height = 600;
+
+var projection = d3.geo.albersUsa()
+    .scale(1280)
+    .translate([width / 2, height / 2]);
+
+var path = d3.geo.path()
+    .projection(projection);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+
+d3.json('us.json', function ready(err, us) {
+  if(err) throw err;
+  console.log('us.objects', us.objects.land)
+  svg.append("g")
+      .attr("class", "land")
+    .selectAll("path")
+      .data(topojson.feature(us, us.objects.states).features)
+    .enter().append("path")
+      // .attr("class", function(d) { return quantize(rateById.get(d.id)); })
+      .attr("d", path);
+
+  // svg.append("path")
+  //     .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+  //     .attr("class", "states")
+  //     .attr("d", path);
+});
+
+</script>
